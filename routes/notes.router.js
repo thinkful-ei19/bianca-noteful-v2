@@ -108,34 +108,37 @@ router.post('/notes', (req, res, next) => {
     return next(err);
   }
 
-  /*
-  notes.create(newItem)
-    .then(item => {
-      if (item) {
-        res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
-      } 
-    })
-    .catch(err => next(err));
-  */
+ knex('notes')
+ .insert(newItem)
+ .returning(['id', 'content', 'title'])
+ .then(item => {
+  if (item) {
+    res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
+  } 
+})
+.catch(err => next(err));
 });
 
 /* ========== DELETE/REMOVE A SINGLE ITEM ========== */
 router.delete('/notes/:id', (req, res, next) => {
   const id = req.params.id;
   
-  /*
-  notes.delete(id)
-    .then(count => {
-      if (count) {
-        res.status(204).end();
-      } else {
-        next();
-      }
-    })
-    .catch(err => next(err));
-  */
 
-  
+ knex('notes')
+ .delete()
+ .where(function() {
+  if(id) {
+    this.where('id', id);
+  }
+ })
+ .then(count => {
+  if (count) {
+    res.status(204).end();
+  } else {
+    next();
+  }
+})
+.catch(err => next(err));
 });
 
 module.exports = router;
