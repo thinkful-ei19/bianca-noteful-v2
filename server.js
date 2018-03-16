@@ -5,6 +5,9 @@ const morgan = require('morgan');
 const { PORT } = require('./config');
 
 const notesRouterV2 = require('./routes/notes.router');
+const folders =  require('./routes/folder.router');
+const tagsRouter =  require('./routes/tags.router');
+
 
 // Create an Express application
 const app = express();
@@ -22,6 +25,8 @@ app.use(express.json());
 
 // Mount router on "/api"
 app.use('/api', notesRouterV2);
+app.use('/api', folders);
+app.use('/api', tagsRouter)
 
 // Catch-all 404
 app.use(function (req, res, next) {
@@ -33,6 +38,7 @@ app.use(function (req, res, next) {
 // Catch-all Error handler
 // Add NODE_ENV check to prevent stacktrace leak
 app.use(function (err, req, res, next) {
+  console.log(err);
   res.status(err.status || 500);
   res.json({
     message: err.message,
@@ -41,8 +47,11 @@ app.use(function (err, req, res, next) {
 });
 
 // Listen for incoming connections
+if(require.main === module) {
 app.listen(PORT, function () {
   console.info(`Server listening on ${this.address().port}`);
 }).on('error', err => {
   console.error(err);
 });
+}
+module.exports = app; //export for testing

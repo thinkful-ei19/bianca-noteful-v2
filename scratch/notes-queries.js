@@ -28,3 +28,7 @@ knex.select(1).then(res => console.log(res));
 //     .where('id', 1011)
 //     .delete()
 //     .then(results => console.log(results));
+
+const noteId = 99;
+const result = [34, 56, 78].map(tagId => ({ note_id: noteId, tag_id: tagId }));
+console.log(`insert: ${result} into notes_tags`);
